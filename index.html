@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="flowerk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flowerk – Visual Preview</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- daisyUI -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ── Design Tokens as CSS Custom Properties ────────────────────────── */
+    :root {
+      /* Colors – Neutral */
+      --color-neutral-50:  #fffdf8;
+      --color-neutral-100: #fdf8f0;
+      --color-neutral-200: #f5efe3;
+      --color-neutral-300: #e8dece;
+      --color-neutral-400: #d4c4ae;
+      --color-neutral-500: #b8a690;
+      --color-neutral-600: #8c7d6a;
+      --color-neutral-700: #5c5144;
+      --color-neutral-800: #3a3028;
+      --color-neutral-900: #1a1410;
+
+      /* Colors – Coach accent palette */
+      --color-coach-1:     #f8679e;
+      --color-coach-1-100: #fce8f1;
+      --color-coach-1-300: #fb9ec2;
+      --color-coach-1-700: #d93e7e;
+
+      --color-coach-2:     #8bc7f9;
+      --color-coach-2-100: #e8f4fe;
+      --color-coach-2-300: #b4d9fb;
+      --color-coach-2-700: #3d9ee8;
+
+      --color-coach-3:     #c6b0df;
+      --color-coach-3-100: #f0ebf8;
+      --color-coach-3-300: #d9c9ec;
+      --color-coach-3-700: #9b7ac9;
+
+      /* Semantic */
+      --color-background:     var(--color-neutral-100);
+      --color-surface:        #ffffff;
+      --color-text-primary:   var(--color-neutral-800);
+      --color-text-secondary: var(--color-neutral-700);
+      --color-text-muted:     var(--color-neutral-600);
+      --color-border:         var(--color-neutral-300);
+      --color-border-subtle:  var(--color-neutral-200);
+
+      /* Typography */
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+
+      /* Shadows */
+      --shadow-sm:   0 1px 2px 0 rgba(58,48,40,0.05);
+      --shadow-md:   0 4px 6px -1px rgba(58,48,40,0.10), 0 2px 4px -1px rgba(58,48,40,0.06);
+      --shadow-soft: 0 8px 32px rgba(198,176,223,0.20);
+
+      /* Motion */
+      --duration-fast:   150ms;
+      --duration-normal: 300ms;
+      --duration-slow:   500ms;
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ── Base ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-background);
+      color: var(--color-text-primary);
+      margin: 0;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      line-height: 1.25;
+    }
+
+    /* ── daisyUI theme overrides ──────────────────────────────────────── */
+    [data-theme="flowerk"] {
+      --p: 248 103 158;
+      --pf: 217 62 126;
+      --pc: 255 255 255;
+      --b1: 253 248 240;
+      --b2: 255 253 248;
+      --b3: 245 239 227;
+      --bc: 58 48 40;
+      --n: 58 48 40;
+    }
+
+    /* ── Utility ──────────────────────────────────────────────────────── */
+    .font-display { font-family: var(--font-display); }
+    .text-muted   { color: var(--color-text-muted); }
+
+    .section-fade { opacity: 0; transform: translateY(32px); }
+
+    /* ── Navigation ───────────────────────────────────────────────────── */
+    .nav-flowerk {
+      background: rgba(253,248,240,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────────── */
+    .hero-section {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(160deg, var(--color-neutral-100) 0%, var(--color-neutral-50) 60%, #f9f0fb 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* ── Coach Cards ──────────────────────────────────────────────────── */
+    .coach-card {
+      border-radius: 1.5rem;
+      transition: transform var(--duration-normal) var(--ease-spring),
+                  box-shadow var(--duration-normal) ease;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .coach-card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .coach-card-text {
+      flex: 1;
+    }
+
+    .coach-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 16px 48px rgba(58,48,40,0.12);
+    }
+
+    .coach-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+    }
+
+    .coach-accent-bar {
+      height: 4px;
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* ── Plan Steps ───────────────────────────────────────────────────── */
+    .plan-step-number {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 300;
+      line-height: 1;
+      opacity: 0.18;
+    }
+
+    /* ── Contact Form ─────────────────────────────────────────────────── */
+    .contact-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(58,48,40,0.4);
+      z-index: 400;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .contact-modal.open { display: flex; }
+
+    .contact-modal-inner {
+      background: var(--color-surface);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────────── */
+    .footer-flowerk {
+      background: var(--color-neutral-800);
+      color: var(--color-neutral-400);
+    }
+
+    /* ── Token Reference Panel ────────────────────────────────────────── */
+    .token-panel {
+      background: var(--color-neutral-900);
+      color: var(--color-neutral-300);
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+    }
+
+    .swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Scrollbar (override daisyUI primary color) ───────────── */
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    *::-webkit-scrollbar        { width: 5px !important; }
+    *::-webkit-scrollbar-track  { background: #f5efe3 !important; }
+    *::-webkit-scrollbar-thumb  { background: #b8a690 !important; border-radius: 3px !important; }
+    *::-webkit-scrollbar-thumb:hover { background: #8c7d6a !important; }
+    * { scrollbar-color: #b8a690 #f5efe3; scrollbar-width: thin; }
+
+    /* ── Override daisyUI btn-ghost yellow hover / active ─────── */
+    .btn-outline-soft {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      padding: 0.625rem 2rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background var(--duration-fast) ease,
+                  border-color var(--duration-fast) ease,
+                  color var(--duration-fast) ease;
+      background: transparent;
+      text-decoration: none;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-outline-soft:hover  { background: rgba(58,48,40,0.05); border-color: var(--color-neutral-400); }
+    .btn-outline-soft:active { background: rgba(58,48,40,0.08); }
+
+    /* ── Service boxes equal height ───────────────────────────── */
+    .service-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .service-box  {
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 110px;
+    }
+
+    /* ── Coach card avatar repositioned ─────────────────────────*/
+    .coach-card    { overflow: visible; }
+    .coach-grid-item { padding-top: 3.5rem; height: 100%; }
+    .coach-avatar-wrap {
+      position: absolute;
+      top: -3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6rem;
+      height: 6rem;
+      border-radius: 50%;
+      border: 4px solid #ffffff;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      z-index: 10;
+    }
+
+    /* ── Coach badge fix ─────────────────────────────────────── */
+    .coach-badge {
+      display: inline-block;
+      border-radius: 9999px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: white;
+      line-height: 1.4;
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Hero image ──────────────────────────────────────────── */
+    .hero-img {
+      width: 100%;
+      max-height: 580px;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 60px rgba(58,48,40,0.18);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .section-fade { opacity: 1; transform: none; }
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'coach-1':     '#f8679e',
+            'coach-1-100': '#fce8f1',
+            'coach-2':     '#8bc7f9',
+            'coach-2-100': '#e8f4fe',
+            'coach-3':     '#c6b0df',
+            'coach-3-100': '#f0ebf8',
+            'cream':       '#fdf8f0',
+            'warm-dark':   '#3a3028',
+          },
+          fontFamily: {
+            display: ['Cormorant Garamond', 'Georgia', 'serif'],
+            body:    ['DM Sans', 'system-ui', 'sans-serif'],
+          },
+          screens: {
+            sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════════════ -->
+<nav class="nav-flowerk">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#" class="font-display text-2xl text-warm-dark tracking-tight">
+      Flowerk
+    </a>
+    <!-- Desktop links -->
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-neutral-600">
+      <a href="#angebot" class="hover:text-warm-dark transition-colors">Angebot</a>
+      <a href="#coaches" class="hover:text-warm-dark transition-colors">Coaches</a>
+      <a href="#kontakt" class="hover:text-warm-dark transition-colors">Kontakt</a>
+    </div>
+    <!-- Mobile menu button -->
+    <button class="md:hidden btn btn-ghost btn-sm" aria-label="Menue oeffnen">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════════ -->
+<section class="hero-section" id="hero">
+  <!-- Decorative blobs -->
+  <div class="hero-blob w-96 h-96 bg-coach-1-100 -top-24 -right-24"></div>
+  <div class="hero-blob w-80 h-80 bg-coach-3-100 bottom-0 left-0"></div>
+  <div class="hero-blob w-64 h-64 bg-coach-2-100 top-1/2 left-1/3"></div>
+
+  <div class="max-w-6xl mx-auto px-6 py-20 relative z-10 w-full">
+
+    <!-- Overline – volle Breite ueber beiden Spalten -->
+    <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-8">
+      Psychologische Beratung &middot; Gesundheitsbegleitung &middot; Life &amp; Systemisches Coaching
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-12 items-stretch">
+    <div class="flex flex-col justify-between">
+      <!-- Hero Headline -->
+      <h1 class="font-display text-5xl md:text-6xl lg:text-7xl text-warm-dark leading-tight mb-6">
+        Raus aus dem Funktionieren.<br/>
+        Rein in deinen
+        <em class="not-italic block" style="
+          background: linear-gradient(90deg, #f8679e, #c6b0df);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          font-size: 1.12em;
+          letter-spacing: -0.03em;
+          font-weight: 700;
+          font-style: italic;
+          display: inline-block;
+        ">Flow.</em>
+      </h1>
+
+      <!-- Hero Subheadline -->
+      <p class="text-lg md:text-xl text-neutral-600 leading-relaxed mb-10 max-w-2xl flex-1">
+        Wir begleiten dich &mdash; mit Psychologischer Beratung, Gesundheitsbegleitung
+        und Life &amp; Systemischem Coaching &mdash; in deinen Flow, in deine Entfaltung
+        und in die Tiefe deiner eigenen Ressourcen. Damit du Muster durchbrichst und
+        selbstbestimmt lebst.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex flex-wrap gap-4">
+        <a href="#coaches"
+           class="btn text-white border-none px-8 py-3 rounded-full font-medium transition-transform hover:scale-105"
+           style="background: linear-gradient(135deg, var(--color-coach-1), var(--color-coach-3));">
+          Lern uns kennen
+        </a>
+        <a href="#angebot"
+           class="btn-outline-soft"
+           style="width:auto; padding: 0.75rem 2rem; color: #3a3028; border-color: var(--color-neutral-300);">
+          Was uns verbindet
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Image -->
+    <div class="hidden md:flex items-stretch justify-center">
+      <img src="assets/image-three-coaches-looking-at-each-other.jpg"
+           alt="Die drei Flowerk Coaches"
+           class="hero-img"
+           style="width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:1.5rem; box-shadow:0 20px 60px rgba(58,48,40,0.18);" />
+    </div>
+
+    </div><!-- end grid -->
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PROBLEM (StoryBrand Step 2)
+══════════════════════════════════════════════════════════════ -->
+<section class="section-fade py-24 px-6" id="angebot">
+  <div class="max-w-6xl mx-auto">
+    <div class="max-w-2xl mx-auto text-center mb-16">
+      <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-4">Wo du gerade stehst</p>
+      <h2 class="font-display text-4xl md:text-5xl text-warm-dark mb-6">
+        Etwas stimmt nicht &mdash;<br/>aber du wei&szlig;t nicht genau, was.
+      </h2>
+      <p class="text-lg text-neutral-600 leading-relaxed">
+        Du funktionierst. Aber du lebst nicht wirklich. Du wei&szlig;t,
+        dass mehr m&ouml;glich ist &mdash; doch du kommst nicht dorthin.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Problem 1 -->
+      <div class="section-fade bg-white rounded-2xl p-8 shadow-sm border border-neutral-200">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center mb-4" style="background: var(--color-coach-1-100);">
+          <span class="text-lg" style="color: var(--color-coach-1-700);">&#9632;</span>
+        </div>
+        <h3 class="font-display text-xl text-warm-dark mb-3">Hilflosigkeit</h3>
+        <p class="text-neutral-600 text-sm leading-relaxed">
+          Du wei&szlig;t, dass du es anders willst. Und trotzdem passiert es wieder:
+          dieselbe Reaktion, dasselbe Muster, dasselbe Ergebnis.
+        </p>
+      </div>
+      <!-- Problem 2 -->
+      <div class="section-fade bg-white rounded-2xl p-8 shadow-sm border border-neutral-200">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center mb-4" style="background: var(--color-coach-2-100);">
+          <span class="text-lg" style="color: var(--color-coach-2-700);">&#9632;</span>
+        </div>
+        <h3 class="font-display text-xl text-warm-dark mb-3">Entfremdung</h3>
+        <p class="text-neutral-600 text-sm leading-relaxed">
+          Du hast den Kontakt zu dir verloren. Was du wirklich f&uuml;hlst,
+          willst oder brauchst &mdash; das ist schwer zu greifen.
+        </p>
+      </div>
+      <!-- Problem 3 -->
+      <div class="section-fade bg-white rounded-2xl p-8 shadow-sm border border-neutral-200">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center mb-4" style="background: var(--color-coach-3-100);">
+          <span class="text-lg" style="color: var(--color-coach-3-700);">&#9632;</span>
+        </div>
+        <h3 class="font-display text-xl text-warm-dark mb-3">Trennung</h3>
+        <p class="text-neutral-600 text-sm leading-relaxed">
+          K&ouml;rper, Geist und Seele scheinen getrennt zu arbeiten. Es zeigen
+          sich Symptome, ohne dass du die tiefere Ursache findest.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     GUIDE / FLOWERK (StoryBrand Step 3)
+══════════════════════════════════════════════════════════════ -->
+<section class="section-fade py-24 px-6" style="background: linear-gradient(180deg, var(--color-neutral-50) 0%, var(--color-neutral-100) 100%);">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <!-- Text -->
+      <div>
+        <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-4">Was uns verbindet</p>
+        <h2 class="font-display text-4xl md:text-5xl text-warm-dark mb-6">
+          Wir kennen dieses Gefuehl.<br/>Und wir wissen: Es muss nicht so bleiben.
+        </h2>
+        <p class="text-lg text-neutral-600 leading-relaxed mb-8">
+          Wir glauben: Du bist nicht das Problem &mdash; du hast Potenzial. Nicht
+          Stillstand, sondern Entfaltung. Nicht Trennung von K&ouml;rper, Geist und
+          Seele, sondern ihr harmonisches Zusammenspiel.
+        </p>
+
+        <!-- Proof Points -->
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
+                 style="background: var(--color-coach-1-100);">
+              <svg class="w-4 h-4" style="color: var(--color-coach-1-700);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-semibold text-warm-dark">Ganzheitlich</p>
+              <p class="text-neutral-600 text-sm">Wir setzen an der Basis an, nicht am Symptom.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
+                 style="background: var(--color-coach-2-100);">
+              <svg class="w-4 h-4" style="color: var(--color-coach-2-700);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-semibold text-warm-dark">Drei Fachbereiche</p>
+              <p class="text-neutral-600 text-sm">Psychologische Beratung, Gesundheitsbegleitung und Life &amp; Systemisches Coaching.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
+                 style="background: var(--color-coach-3-100);">
+              <svg class="w-4 h-4" style="color: var(--color-coach-3-700);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-semibold text-warm-dark">Direkt erreichbar</p>
+              <p class="text-neutral-600 text-sm">Kostenloses Erstgespr&auml;ch, Kontakt und Terminbuchung ohne Umwege.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual accent – Bild oben (volle Breite), drei Service-Boxen darunter -->
+      <div class="flex flex-col gap-4">
+
+        <!-- Chairs image – full column width -->
+        <img src="assets/image-chairs-in-room.jpg"
+             alt="Der Flowerk Coaching-Raum"
+             class="hidden sm:block"
+             style="width:100%; aspect-ratio:16/9; object-fit:cover; object-position:center; border-radius:1rem;" />
+
+        <!-- Service boxes – 3-column row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="service-box" style="background: var(--color-coach-1-100);">
+            <p class="font-display text-3xl font-light mb-2" style="color: var(--color-coach-1);">&#10024;</p>
+            <p class="font-display text-base text-warm-dark leading-tight">Psychologische Beratung</p>
+            <p class="text-xs mt-1" style="color: var(--color-coach-1-700);">Innere Muster verstehen und l&ouml;sen</p>
+          </div>
+          <div class="service-box" style="background: var(--color-coach-2-100);">
+            <p class="font-display text-3xl font-light mb-2" style="color: var(--color-coach-2-700);">&#9670;</p>
+            <p class="font-display text-base text-warm-dark leading-tight">Gesundheitsbegleitung</p>
+            <p class="text-xs mt-1" style="color: var(--color-coach-2-700);">K&ouml;rper und Wohlbefinden st&auml;rken</p>
+          </div>
+          <div class="service-box" style="background: var(--color-coach-3-100);">
+            <p class="font-display text-3xl font-light mb-2" style="color: var(--color-coach-3-700);">&#9671;</p>
+            <p class="font-display text-base text-warm-dark leading-tight">Life &amp; Systemisches Coaching</p>
+            <p class="text-xs mt-1" style="color: var(--color-coach-3-700);">Muster erkennen, Richtung finden</p>
+          </div>
+        </div><!-- end service boxes -->
+
+      </div><!-- end visual accent -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PLAN (StoryBrand Step 4)
+══════════════════════════════════════════════════════════════ -->
+<section class="section-fade py-24 px-6">
+  <div class="max-w-6xl mx-auto text-center">
+    <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-4">So einfach geht es</p>
+    <h2 class="font-display text-4xl md:text-5xl text-warm-dark mb-16">
+      Drei Schritte zur&uuml;ck zu dir.
+    </h2>
+    <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+      <!-- Step 1 -->
+      <div class="section-fade relative">
+        <p class="plan-step-number text-warm-dark">01</p>
+        <h3 class="font-display text-2xl text-warm-dark mb-3 -mt-4">Finde deine Coach.</h3>
+        <p class="text-neutral-600 text-sm leading-relaxed">
+          Schau dir die Coaches an. Vertrau deiner Intuition,
+          wen du ansprechen m&ouml;chtest.
+        </p>
+      </div>
+      <!-- Connector -->
+      <div class="hidden md:flex items-center justify-center absolute top-8 left-1/3 right-1/3 pointer-events-none">
+      </div>
+      <!-- Step 2 -->
+      <div class="section-fade">
+        <p class="plan-step-number text-warm-dark">02</p>
+        <h3 class="font-display text-2xl text-warm-dark mb-3 -mt-4">Nimm Kontakt auf.</h3>
+        <p class="text-neutral-600 text-sm leading-relaxed">
+          Schreib eine Nachricht oder buche direkt einen Termin &mdash;
+          direkt hier auf dieser Seite.
+        </p>
+      </div>
+      <!-- Step 3 -->
+      <div class="section-fade">
+        <p class="plan-step-number text-warm-dark">03</p>
+        <h3 class="font-display text-2xl text-warm-dark mb-3 -mt-4">Mach deinen ersten Schritt.</h3>
+        <p class="text-neutral-600 text-sm leading-relaxed">
+          Das erste Gespr&auml;ch z&auml;hlt. Keine Verpflichtung &mdash;
+          nur ein Anfang.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     COACHES (CTA per Coach – StoryBrand Step 5)
+══════════════════════════════════════════════════════════════ -->
+<section class="section-fade py-24 px-6" id="coaches"
+         style="background: linear-gradient(180deg, var(--color-neutral-100) 0%, var(--color-neutral-50) 100%);">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16">
+      <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-4">Der Raum hinter Flowerk</p>
+      <h2 class="font-display text-4xl md:text-5xl text-warm-dark">
+        Die Coaches: Verschiedene Perspektiven. Eine Philosophie.
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- Coach 1 – Psychologische Beratung (Pink) -->
+      <div class="coach-grid-item relative" id="kontakt">
+        <div class="coach-card bg-white relative" style="border-radius:1.5rem; overflow:visible; box-shadow: var(--shadow-soft);">
+          <div class="coach-accent-bar" style="background: var(--color-coach-1); border-radius: 1.5rem 1.5rem 0 0;"></div>
+          <!-- Avatar centered on top -->
+          <div class="coach-avatar-wrap" style="background: var(--color-coach-1-100); color: var(--color-coach-1-700);">C</div>
+        <div class="p-8 pt-10 coach-card-body">
+          <!-- Badge -->
+          <span class="coach-badge" style="background: var(--color-coach-1);">
+            Psychologische Beratung
+          </span>
+          <!-- Teaser (2-3 Saetze) -->
+          <h3 class="font-display text-2xl text-warm-dark mb-3">Coach 1</h3>
+          <p class="text-neutral-600 text-sm leading-relaxed mb-6 coach-card-text">
+            Hier stehen 2&ndash;3 kurze S&auml;tze &uuml;ber diese Coach:
+            ihr Schwerpunkt, was sie bewegt und warum sie das tut, was sie tut.
+            Kein langer Lebenslauf &mdash; nur das Wesentliche.
+          </p>
+          <!-- CTAs -->
+          <div class="space-y-3">
+            <button onclick="openModal('coach1')"
+                    class="btn w-full text-white border-none rounded-full font-medium transition-transform hover:scale-105"
+                    style="background: var(--color-coach-1);">
+              Erstgespr&auml;ch buchen (kostenlos)
+            </button>
+            <button onclick="openModal('coach1')"
+                    class="btn-outline-soft"
+                    style="border-color: var(--color-coach-1); color: var(--color-coach-1-700);">
+              Nachricht senden
+            </button>
+            <a href="#"
+               class="block text-center text-xs text-neutral-400 hover:text-neutral-600 transition-colors pt-1">
+              Zur Website &#8599;
+            </a>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Coach 2 – Gesundheitsbegleitung (Blue) -->
+      <div class="coach-grid-item relative">
+        <div class="coach-card bg-white relative" style="border-radius:1.5rem; overflow:visible; box-shadow: var(--shadow-soft);">
+          <div class="coach-accent-bar" style="background: var(--color-coach-2); border-radius: 1.5rem 1.5rem 0 0;"></div>
+          <div class="coach-avatar-wrap" style="background: var(--color-coach-2-100); color: var(--color-coach-2-700);">C</div>
+        <div class="p-8 pt-10 coach-card-body">
+          <span class="coach-badge" style="background: var(--color-coach-2-700);">
+            Gesundheitsbegleitung
+          </span>
+          <h3 class="font-display text-2xl text-warm-dark mb-3">Coach 2</h3>
+          <p class="text-neutral-600 text-sm leading-relaxed mb-6 coach-card-text">
+            Hier stehen 2&ndash;3 kurze S&auml;tze &uuml;ber diese Coach:
+            ihr Schwerpunkt, was sie bewegt und warum sie das tut, was sie tut.
+            Kein langer Lebenslauf &mdash; nur das Wesentliche.
+          </p>
+          <div class="space-y-3">
+            <button onclick="openModal('coach2')"
+                    class="btn w-full text-white border-none rounded-full font-medium transition-transform hover:scale-105"
+                    style="background: var(--color-coach-2-700);">
+              Erstgespr&auml;ch buchen (kostenlos)
+            </button>
+            <button onclick="openModal('coach2')"
+                    class="btn-outline-soft"
+                    style="border-color: var(--color-coach-2-700); color: var(--color-coach-2-700);">
+              Nachricht senden
+            </button>
+            <a href="#"
+               class="block text-center text-xs text-neutral-400 hover:text-neutral-600 transition-colors pt-1">
+              Zur Website &#8599;
+            </a>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Coach 3 – Life & Systemisches Coaching (Lavender) -->
+      <div class="coach-grid-item relative">
+        <div class="coach-card bg-white relative" style="border-radius:1.5rem; overflow:visible; box-shadow: var(--shadow-soft);">
+          <div class="coach-accent-bar" style="background: var(--color-coach-3); border-radius: 1.5rem 1.5rem 0 0;"></div>
+          <div class="coach-avatar-wrap" style="background: var(--color-coach-3-100); color: var(--color-coach-3-700);">C</div>
+        <div class="p-8 pt-10 coach-card-body">
+          <span class="coach-badge" style="background: var(--color-coach-3-700);">
+            Life &amp; Systemisches Coaching
+          </span>
+          <h3 class="font-display text-2xl text-warm-dark mb-3">Coach 3</h3>
+          <p class="text-neutral-600 text-sm leading-relaxed mb-6 coach-card-text">
+            Hier stehen 2&ndash;3 kurze S&auml;tze &uuml;ber diese Coach:
+            ihr Schwerpunkt, was sie bewegt und warum sie das tut, was sie tut.
+            Kein langer Lebenslauf &mdash; nur das Wesentliche.
+          </p>
+          <div class="space-y-3">
+            <button onclick="openModal('coach3')"
+                    class="btn w-full text-white border-none rounded-full font-medium transition-transform hover:scale-105"
+                    style="background: var(--color-coach-3-700);">
+              Erstgespr&auml;ch buchen (kostenlos)
+            </button>
+            <button onclick="openModal('coach3')"
+                    class="btn-outline-soft"
+                    style="border-color: var(--color-coach-3-700); color: var(--color-coach-3-700);">
+              Nachricht senden
+            </button>
+            <a href="#"
+               class="block text-center text-xs text-neutral-400 hover:text-neutral-600 transition-colors pt-1">
+              Zur Website &#8599;
+            </a>
+          </div>
+        </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SUCCESS / FAILURE (StoryBrand Steps 6 + 7)
+══════════════════════════════════════════════════════════════ -->
+<section class="section-fade py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Failure -->
+      <div class="rounded-2xl p-8 border" style="border-color: var(--color-neutral-300); background: var(--color-neutral-50);">
+        <p class="text-xs font-semibold tracking-widest uppercase text-neutral-400 mb-4">Ohne Veraenderung</p>
+        <p class="font-display text-xl text-neutral-600 leading-relaxed italic">
+          &ldquo;Wer in gewohnten Mustern bleibt, wartet vergeblich
+          auf Ver&auml;nderung von au&szlig;en.&rdquo;
+        </p>
+      </div>
+      <!-- Success -->
+      <div class="rounded-2xl p-8" style="background: linear-gradient(135deg, var(--color-coach-1-100), var(--color-coach-3-100));">
+        <p class="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-4">Mit Flowerk</p>
+        <p class="font-display text-xl text-warm-dark leading-relaxed">
+          &ldquo;Ein Leben, in dem du dich selbst kennst, dir vertraust
+          und aus innerer Kraft handelst.&rdquo;
+        </p>
+      </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="text-center mt-16">
+      <h2 class="font-display text-3xl md:text-4xl text-warm-dark mb-6">
+        Dein erster Schritt zur&uuml;ck zu dir.
+      </h2>
+      <p class="text-neutral-600 mb-8">
+        W&auml;hl deine Coach &mdash; und buch dein kostenloses Erstgespr&auml;ch.
+      </p>
+      <a href="#coaches"
+         class="btn text-white border-none px-10 py-3 rounded-full font-medium transition-transform hover:scale-105"
+         style="background: linear-gradient(135deg, var(--color-coach-1), var(--color-coach-3));">
+        Zu den Coaches
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONTACT MODAL (Formular-Demo)
+══════════════════════════════════════════════════════════════ -->
+<div class="contact-modal" id="contact-modal" onclick="closeModal(event)">
+  <div class="contact-modal-inner" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-display text-2xl text-warm-dark" id="modal-title">Nachricht senden</h3>
+      <button onclick="closeModal()" class="btn btn-ghost btn-sm btn-circle text-neutral-400">✕</button>
+    </div>
+    <form onsubmit="event.preventDefault(); alert('Formular gesendet! (Demo)')">
+      <div class="space-y-4">
+        <div>
+          <label class="label"><span class="label-text text-sm font-medium">Dein Name</span></label>
+          <input type="text" placeholder="Vorname Nachname" class="input input-bordered w-full rounded-xl" />
+        </div>
+        <div>
+          <label class="label"><span class="label-text text-sm font-medium">E-Mail-Adresse</span></label>
+          <input type="email" placeholder="deine@email.de" class="input input-bordered w-full rounded-xl" />
+        </div>
+        <div>
+          <label class="label"><span class="label-text text-sm font-medium">Deine Nachricht</span></label>
+          <textarea rows="4" placeholder="Womit kann ich dir helfen?" class="textarea textarea-bordered w-full rounded-xl"></textarea>
+        </div>
+        <p class="text-xs text-neutral-400">
+          Mit dem Absenden stimmst du der Verarbeitung deiner Daten gemaess
+          unserer <a href="#" class="underline">Datenschutzerklaerung</a> zu.
+        </p>
+        <button type="submit"
+                class="btn w-full text-white border-none rounded-full font-medium"
+                id="modal-btn"
+                style="background: var(--color-coach-1);">
+          Nachricht senden
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════════ -->
+<footer class="footer-flowerk py-12 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="font-display text-2xl text-neutral-200 mb-2">Flowerk</p>
+        <p class="text-neutral-500 text-sm">Dein Flow. Deine Entfaltung. Dein erster Schritt zur&uuml;ck zu dir.</p>
+      </div>
+      <div class="flex flex-wrap gap-6 text-sm text-neutral-500">
+        <a href="#" class="hover:text-neutral-300 transition-colors">Impressum</a>
+        <a href="#" class="hover:text-neutral-300 transition-colors">Datenschutz</a>
+        <a href="#" class="hover:text-neutral-300 transition-colors">Kontakt</a>
+      </div>
+    </div>
+    <div class="border-t border-neutral-700 mt-8 pt-8 flex flex-wrap gap-6 justify-center md:justify-start">
+      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-1-100); color: var(--color-coach-1-700);">Psychologische Beratung</span>
+      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-2-100); color: var(--color-coach-2-700);">Gesundheitsbegleitung</span>
+      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-3-100); color: var(--color-coach-3-700);">Life &amp; Systemisches Coaching</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOKEN REFERENCE PANEL
+══════════════════════════════════════════════════════════════ -->
+<section class="token-panel py-16 px-6">
+  <div class="max-w-6xl mx-auto">
+    <p class="text-neutral-200 font-semibold text-lg mb-10 font-display">&#9654; Design Token Reference</p>
+
+    <!-- Color swatches -->
+    <div class="mb-10">
+      <p class="text-neutral-400 text-xs tracking-widest uppercase mb-4">Farben – Coach Palette</p>
+      <div class="flex flex-wrap gap-3">
+        <div class="text-center"><div class="swatch" style="background:#f8679e"></div><p class="mt-1 text-xs">#f8679e<br/>coach-1</p></div>
+        <div class="text-center"><div class="swatch" style="background:#fce8f1"></div><p class="mt-1 text-xs">#fce8f1<br/>coach-1-100</p></div>
+        <div class="text-center"><div class="swatch" style="background:#8bc7f9"></div><p class="mt-1 text-xs">#8bc7f9<br/>coach-2</p></div>
+        <div class="text-center"><div class="swatch" style="background:#e8f4fe"></div><p class="mt-1 text-xs">#e8f4fe<br/>coach-2-100</p></div>
+        <div class="text-center"><div class="swatch" style="background:#c6b0df"></div><p class="mt-1 text-xs">#c6b0df<br/>coach-3</p></div>
+        <div class="text-center"><div class="swatch" style="background:#f0ebf8"></div><p class="mt-1 text-xs">#f0ebf8<br/>coach-3-100</p></div>
+      </div>
+    </div>
+
+    <div class="mb-10">
+      <p class="text-neutral-400 text-xs tracking-widest uppercase mb-4">Farben – Neutral + Semantic</p>
+      <div class="flex flex-wrap gap-3">
+        <div class="text-center"><div class="swatch" style="background:#fffdf8"></div><p class="mt-1 text-xs">#fffdf8<br/>n-50</p></div>
+        <div class="text-center"><div class="swatch" style="background:#fdf8f0"></div><p class="mt-1 text-xs">#fdf8f0<br/>bg</p></div>
+        <div class="text-center"><div class="swatch" style="background:#f5efe3"></div><p class="mt-1 text-xs">#f5efe3<br/>n-200</p></div>
+        <div class="text-center"><div class="swatch" style="background:#e8dece"></div><p class="mt-1 text-xs">#e8dece<br/>border</p></div>
+        <div class="text-center"><div class="swatch" style="background:#8c7d6a"></div><p class="mt-1 text-xs">#8c7d6a<br/>muted</p></div>
+        <div class="text-center"><div class="swatch" style="background:#5c5144"></div><p class="mt-1 text-xs">#5c5144<br/>text-2</p></div>
+        <div class="text-center"><div class="swatch" style="background:#3a3028"></div><p class="mt-1 text-xs">#3a3028<br/>text-1</p></div>
+        <div class="text-center"><div class="swatch" style="background:#1a1410"></div><p class="mt-1 text-xs">#1a1410<br/>n-900</p></div>
+      </div>
+    </div>
+
+    <!-- Typography scale -->
+    <div class="mb-10">
+      <p class="text-neutral-400 text-xs tracking-widest uppercase mb-4">Typografie – Display (Cormorant Garamond)</p>
+      <div class="space-y-2">
+        <p style="font-family:var(--font-display); font-size:3.75rem; color:#e8dece; line-height:1.1;">6xl / 60px – Rein in deinen Flow.</p>
+        <p style="font-family:var(--font-display); font-size:3rem; color:#d4c4ae; line-height:1.2;">5xl / 48px – Drei Schritte zurueck.</p>
+        <p style="font-family:var(--font-display); font-size:2.25rem; color:#b8a690; line-height:1.25;">4xl / 36px – Headline Section</p>
+        <p style="font-family:var(--font-display); font-size:1.875rem; color:#8c7d6a; line-height:1.3;">3xl / 30px – Sub-Headline</p>
+      </div>
+    </div>
+
+    <div class="mb-10">
+      <p class="text-neutral-400 text-xs tracking-widest uppercase mb-4">Typografie – Body (DM Sans)</p>
+      <div class="space-y-2">
+        <p style="font-size:1.25rem; color:#d4c4ae;">xl / 20px – Intro-Fliesstext, Subheadlines</p>
+        <p style="font-size:1.125rem; color:#b8a690;">lg / 18px – Fliesstext gross</p>
+        <p style="font-size:1rem; color:#8c7d6a;">base / 16px – Standard-Fliesstext</p>
+        <p style="font-size:0.875rem; color:#5c5144;">sm / 14px – Labels, Hilfstexte</p>
+        <p style="font-size:0.75rem; color:#3a3028;">xs / 12px – Overlines, Rechtliches</p>
+      </div>
+    </div>
+
+    <!-- Spacing scale -->
+    <div class="mb-6">
+      <p class="text-neutral-400 text-xs tracking-widest uppercase mb-4">Abstands-Skala (4px-Raster)</p>
+      <div class="flex items-end gap-3">
+        <div style="width:4px; height:4px; background:#f8679e"></div><span class="text-xs">4</span>
+        <div style="width:8px; height:8px; background:#fb9ec2"></div><span class="text-xs">8</span>
+        <div style="width:16px; height:16px; background:#c6b0df"></div><span class="text-xs">16</span>
+        <div style="width:32px; height:32px; background:#8bc7f9"></div><span class="text-xs">32</span>
+        <div style="width:48px; height:48px; background:#b4d9fb"></div><span class="text-xs">48</span>
+        <div style="width:64px; height:64px; background:#e8f4fe"></div><span class="text-xs">64</span>
+      </div>
+    </div>
+
+    <p class="text-neutral-600 text-xs mt-8">
+      Flowerk Visual Preview &mdash; spec/ui-preview/index.html &mdash; Generiert 2026-06-15
+      &mdash; Status: ENTWURF; vor SvelteKit-Implementierung im Browser verifizieren.
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════════ -->
+<script>
+  // ── Contact Modal ──────────────────────────────────────────
+  const coachColors = {
+    coach1: { bg: '#f8679e', label: 'Coach 1 – Psychologische Beratung' },
+    coach2: { bg: '#3d9ee8', label: 'Coach 2 – Gesundheitsbegleitung' },
+    coach3: { bg: '#9b7ac9', label: 'Coach 3 – Life & Systemisches Coaching' },
+  };
+
+  function openModal(coach) {
+    const modal = document.getElementById('contact-modal');
+    const title = document.getElementById('modal-title');
+    const btn   = document.getElementById('modal-btn');
+    const info  = coachColors[coach];
+    title.textContent = 'Nachricht an ' + info.label.split(' – ')[0];
+    btn.style.background = info.bg;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(e) {
+    if (!e || e.target === document.getElementById('contact-modal') || !e.target) {
+      document.getElementById('contact-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ── GSAP ScrollTrigger Animations ─────────────────────────
+  window.addEventListener('load', () => {
+    // Respect prefers-reduced-motion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Animate all .section-fade elements on scroll
+    gsap.utils.toArray('.section-fade').forEach((el) => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 32 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          }
+        }
+      );
+    });
+
+    // Hero entrance animation
+    gsap.from('.hero-section h1', { opacity: 0, y: 24, duration: 1, ease: 'power3.out', delay: 0.2 });
+    gsap.from('.hero-section p',  { opacity: 0, y: 16, duration: 0.8, ease: 'power2.out', delay: 0.5 });
+    gsap.from('.hero-section .flex.flex-wrap', { opacity: 0, y: 12, duration: 0.6, ease: 'power2.out', delay: 0.8 });
+
+    // Blob subtle float
+    gsap.to('.hero-blob', {
+      y: '+=20',
+      duration: 4,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      stagger: 1.5
+    });
+  });
+</script>
+
+</body>
+</html>
