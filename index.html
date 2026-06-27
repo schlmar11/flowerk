@@ -10,6 +10,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
+  <!-- Phosphor Icons -->
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css"
+  />
+
   <!-- daisyUI -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" />
 
@@ -19,7 +31,7 @@
   <!-- GSAP + ScrollTrigger -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-  
+
   <style>
     /* ── Design Tokens as CSS Custom Properties ────────────────────────── */
     :root {
@@ -127,17 +139,37 @@
       min-height: 90vh;
       display: flex;
       align-items: center;
-      background: linear-gradient(160deg, var(--color-neutral-100) 0%, var(--color-neutral-50) 60%, #f9f0fb 100%);
+      background-image: url('assets/raum_hero.png');
+      background-size: cover;
+      background-position: right center;
+      background-attachment: scroll;
       position: relative;
       overflow: hidden;
     }
 
-    .hero-blob {
+    .hero-section::before {
+      content: '';
       position: absolute;
-      border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-      filter: blur(60px);
-      opacity: 0.35;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(253, 248, 240, 0.93) 0%,
+        rgba(253, 248, 240, 0.78) 38%,
+        rgba(253, 248, 240, 0.30) 62%,
+        rgba(253, 248, 240, 0.00) 100%
+      );
+      z-index: 1;
       pointer-events: none;
+    }
+
+    @media (max-width: 767px) {
+      .hero-section {
+        background-position: right 30%;
+        min-height: 70vh;
+      }
+      .hero-section::before {
+        background: rgba(253, 248, 240, 0.90);
+      }
     }
 
     /* ── Coach Cards ──────────────────────────────────────────────────── */
@@ -154,6 +186,13 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      padding-top: 5.5rem !important;
+    }
+    .coach-card-body h3 {
+      min-height: 4rem;
+    }
+    .coach-subtitle {
+      min-height: 3rem;
     }
     .coach-card-text {
       flex: 1;
@@ -238,7 +277,7 @@
     *::-webkit-scrollbar-track  { background: #f5efe3 !important; }
     *::-webkit-scrollbar-thumb  { background: #b8a690 !important; border-radius: 3px !important; }
     *::-webkit-scrollbar-thumb:hover { background: #8c7d6a !important; }
-    * { scrollbar-color: #b8a690 #f5efe3; scrollbar-width: thin; }
+    * { scrollbar-color: #b8a690 #f5efe3 !important; scrollbar-width: thin !important; }
 
     /* ── Override daisyUI btn-ghost yellow hover / active ─────── */
     .btn-outline-soft {
@@ -278,14 +317,14 @@
 
     /* ── Coach card avatar repositioned ─────────────────────────*/
     .coach-card    { overflow: visible; }
-    .coach-grid-item { padding-top: 3.5rem; height: 100%; }
+    .coach-grid-item { padding-top: 8rem; height: 100%; }
     .coach-avatar-wrap {
       position: absolute;
-      top: -3rem;
+      top: -7rem;
       left: 50%;
       transform: translateX(-50%);
-      width: 6rem;
-      height: 6rem;
+      width: 12rem;
+      height: 12rem;
       border-radius: 50%;
       border: 4px solid #ffffff;
       box-shadow: var(--shadow-md);
@@ -356,13 +395,13 @@
 
 <body>
 
-
 <!-- ═══════════════════════════════════════════════════════════
      NAVIGATION
 ══════════════════════════════════════════════════════════════ -->
 <nav class="nav-flowerk">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="#" class="font-display text-2xl text-warm-dark tracking-tight">
+    <a href="#" class="font-display text-2xl text-warm-dark tracking-tight flex items-center gap-2">
+      <img src="assets/logo_better_wo_bg.png" alt="Flowerk" class="h-8 w-auto" />
       Flowerk
     </a>
     <!-- Desktop links -->
@@ -385,16 +424,11 @@
      HERO
 ══════════════════════════════════════════════════════════════ -->
 <section class="hero-section" id="hero">
-  <!-- Decorative blobs -->
-  <div class="hero-blob w-96 h-96 bg-coach-1-100 -top-24 -right-24"></div>
-  <div class="hero-blob w-80 h-80 bg-coach-3-100 bottom-0 left-0"></div>
-  <div class="hero-blob w-64 h-64 bg-coach-2-100 top-1/2 left-1/3"></div>
-
   <div class="max-w-6xl mx-auto px-6 py-20 relative z-10 w-full">
 
     <!-- Overline – volle Breite ueber beiden Spalten -->
     <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-8">
-      Psychologische Beratung &middot; Gesundheitsbegleitung &middot; Life &amp; Systemisches Coaching
+      Psychologische Beratung &middot; Gesundheitsbegleitung &middot; Life &amp; System Coaching
     </p>
 
     <div class="grid md:grid-cols-2 gap-12 items-stretch">
@@ -418,10 +452,9 @@
 
       <!-- Hero Subheadline -->
       <p class="text-lg md:text-xl text-neutral-600 leading-relaxed mb-10 max-w-2xl flex-1">
-        Wir begleiten dich &mdash; mit Psychologischer Beratung, Gesundheitsbegleitung
-        und Life &amp; Systemischem Coaching &mdash; in deinen Flow, in deine Entfaltung
-        und in die Tiefe deiner eigenen Ressourcen. Damit du Muster durchbrichst und
-        selbstbestimmt lebst.
+        Ein Raum, um dich zu entfalten und aus der Tiefe deiner eigenen Ressourcen zu schöpfen.
+        Damit du Muster durchbrichst und selbstbestimmt lebst &mdash; in deinem Flow.<br/>
+        Wir begleiten dich dabei &mdash; mit psychologischer Beratung, Gesundheitsbegleitung und Life &amp; System Coaching.
       </p>
 
       <!-- CTAs -->
@@ -433,18 +466,10 @@
         </a>
         <a href="#angebot"
            class="btn-outline-soft"
-           style="width:auto; padding: 0.75rem 2rem; color: #3a3028; border-color: var(--color-neutral-300);">
+           style="width:auto; padding: 0.75rem 2rem; color: #3a3028; border-color: var(--color-neutral-500); background: rgba(255,255,255,0.70);">
           Was uns verbindet
         </a>
       </div>
-    </div>
-
-    <!-- Hero Image -->
-    <div class="hidden md:flex items-stretch justify-center">
-      <img src="assets/image-three-coaches-looking-at-each-other.jpg"
-           alt="Die drei Flowerk Coaches"
-           class="hero-img"
-           style="width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:1.5rem; box-shadow:0 20px 60px rgba(58,48,40,0.18);" />
     </div>
 
     </div><!-- end grid -->
@@ -460,11 +485,11 @@
     <div class="max-w-2xl mx-auto text-center mb-16">
       <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-4">Wo du gerade stehst</p>
       <h2 class="font-display text-4xl md:text-5xl text-warm-dark mb-6">
-        Etwas stimmt nicht &mdash;<br/>aber du wei&szlig;t nicht genau, was.
+        Du sp&uuml;rst, dass mehr f&uuml;r dich m&ouml;glich ist.
       </h2>
       <p class="text-lg text-neutral-600 leading-relaxed">
-        Du funktionierst. Aber du lebst nicht wirklich. Du wei&szlig;t,
-        dass mehr m&ouml;glich ist &mdash; doch du kommst nicht dorthin.
+        Du w&uuml;nschst dir mehr Leichtigkeit, mehr Klarheit oder wieder eine st&auml;rkere Verbindung zu dir selbst?</br>
+        Wir begleiten dich auf dem Weg zur&uuml;ck in deinen Flow.
       </p>
     </div>
 
@@ -472,34 +497,31 @@
       <!-- Problem 1 -->
       <div class="section-fade bg-white rounded-2xl p-8 shadow-sm border border-neutral-200">
         <div class="w-10 h-10 rounded-full flex items-center justify-center mb-4" style="background: var(--color-coach-1-100);">
-          <span class="text-lg" style="color: var(--color-coach-1-700);">&#9632;</span>
+          <i class="ph-light ph-magnifying-glass w-5 h-5" style="color: var(--color-coach-1-700); font-size: 1.25rem;" aria-hidden="true"></i>
         </div>
-        <h3 class="font-display text-xl text-warm-dark mb-3">Hilflosigkeit</h3>
+        <h3 class="font-display text-xl text-warm-dark mb-3">Klarheit</h3>
         <p class="text-neutral-600 text-sm leading-relaxed">
-          Du wei&szlig;t, dass du es anders willst. Und trotzdem passiert es wieder:
-          dieselbe Reaktion, dasselbe Muster, dasselbe Ergebnis.
+          Du sp&uuml;rst, dass sich etwas ver&auml;ndern darf und m&ouml;chtest besser verstehen, was dich bewegt.
         </p>
       </div>
       <!-- Problem 2 -->
       <div class="section-fade bg-white rounded-2xl p-8 shadow-sm border border-neutral-200">
         <div class="w-10 h-10 rounded-full flex items-center justify-center mb-4" style="background: var(--color-coach-2-100);">
-          <span class="text-lg" style="color: var(--color-coach-2-700);">&#9632;</span>
+          <i class="ph-light ph-heart w-5 h-5" style="color: var(--color-coach-2-700); font-size: 1.25rem;" aria-hidden="true"></i>
         </div>
-        <h3 class="font-display text-xl text-warm-dark mb-3">Entfremdung</h3>
+        <h3 class="font-display text-xl text-warm-dark mb-3">Verbindung</h3>
         <p class="text-neutral-600 text-sm leading-relaxed">
-          Du hast den Kontakt zu dir verloren. Was du wirklich f&uuml;hlst,
-          willst oder brauchst &mdash; das ist schwer zu greifen.
+          Du m&ouml;chtest wieder st&auml;rker mit deinen Bed&uuml;rfnissen und Ressourcen in Kontakt kommen.
         </p>
       </div>
       <!-- Problem 3 -->
       <div class="section-fade bg-white rounded-2xl p-8 shadow-sm border border-neutral-200">
         <div class="w-10 h-10 rounded-full flex items-center justify-center mb-4" style="background: var(--color-coach-3-100);">
-          <span class="text-lg" style="color: var(--color-coach-3-700);">&#9632;</span>
+          <i class="ph-light ph-circle w-5 h-5" style="color: var(--color-coach-3-700); font-size: 1.25rem;" aria-hidden="true"></i>
         </div>
-        <h3 class="font-display text-xl text-warm-dark mb-3">Trennung</h3>
+        <h3 class="font-display text-xl text-warm-dark mb-3">Ganzheit</h3>
         <p class="text-neutral-600 text-sm leading-relaxed">
-          K&ouml;rper, Geist und Seele scheinen getrennt zu arbeiten. Es zeigen
-          sich Symptome, ohne dass du die tiefere Ursache findest.
+          Du m&ouml;chtest K&ouml;rper, Gedanken und Gef&uuml;hle wieder als Einheit erleben und bewusst gestalten.
         </p>
       </div>
     </div>
@@ -520,9 +542,9 @@
           Wir kennen dieses Gefuehl.<br/>Und wir wissen: Es muss nicht so bleiben.
         </h2>
         <p class="text-lg text-neutral-600 leading-relaxed mb-8">
-          Wir glauben: Du bist nicht das Problem &mdash; du hast Potenzial. Nicht
-          Stillstand, sondern Entfaltung. Nicht Trennung von K&ouml;rper, Geist und
-          Seele, sondern ihr harmonisches Zusammenspiel.
+          Wir glauben an Entwicklung, nicht an Stillstand. Jeder Mensch tr&auml;gt bereits die F&auml;higkeit 
+          zur Ver&auml;nderung in sich. Manchmal braucht es nur den richtigen Impuls, neue Perspektiven und 
+          einen gesch&uuml;tzten Raum, um diese Kraft wieder zu entdecken.
         </p>
 
         <!-- Proof Points -->
@@ -530,33 +552,27 @@
           <div class="flex items-start gap-4">
             <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
                  style="background: var(--color-coach-1-100);">
-              <svg class="w-4 h-4" style="color: var(--color-coach-1-700);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
+              <i class="ph-light ph-check" style="font-size: 1rem; color: var(--color-coach-1-700);" aria-hidden="true"></i>
             </div>
             <div>
               <p class="font-semibold text-warm-dark">Ganzheitlich</p>
-              <p class="text-neutral-600 text-sm">Wir setzen an der Basis an, nicht am Symptom.</p>
+              <p class="text-neutral-600 text-sm">Wir arbeiten nicht nur an Symptomen, sondern an den Ursachen und Zusammenh&auml;ngen dahinter.</p>
             </div>
           </div>
           <div class="flex items-start gap-4">
             <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
                  style="background: var(--color-coach-2-100);">
-              <svg class="w-4 h-4" style="color: var(--color-coach-2-700);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
+              <i class="ph-light ph-check" style="font-size: 1rem; color: var(--color-coach-2-700);" aria-hidden="true"></i>
             </div>
             <div>
               <p class="font-semibold text-warm-dark">Drei Fachbereiche</p>
-              <p class="text-neutral-600 text-sm">Psychologische Beratung, Gesundheitsbegleitung und Life &amp; Systemisches Coaching.</p>
+              <p class="text-neutral-600 text-sm">Psychologische Beratung, Gesundheitsbegleitung und Life &amp; System Coaching.</p>
             </div>
           </div>
           <div class="flex items-start gap-4">
             <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
                  style="background: var(--color-coach-3-100);">
-              <svg class="w-4 h-4" style="color: var(--color-coach-3-700);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
+              <i class="ph-light ph-check" style="font-size: 1rem; color: var(--color-coach-3-700);" aria-hidden="true"></i>
             </div>
             <div>
               <p class="font-semibold text-warm-dark">Direkt erreichbar</p>
@@ -566,31 +582,31 @@
         </div>
       </div>
 
-      <!-- Visual accent – Bild oben (volle Breite), drei Service-Boxen darunter -->
-      <div class="flex flex-col gap-4">
+      <!-- Visual accent – zwei Spalten: Bild links, Service-Boxen rechts -->
+      <div class="grid sm:grid-cols-2 gap-4 items-stretch">
 
-        <!-- Chairs image – full column width -->
-        <img src="assets/image-chairs-in-room.jpg"
-             alt="Der Flowerk Coaching-Raum"
+        <!-- Col 1: Image -->
+        <img src="assets/image-three-coaches-looking-at-each-other.jpeg"
+             alt="Die drei Flowerk Coaches"
              class="hidden sm:block"
-             style="width:100%; aspect-ratio:16/9; object-fit:cover; object-position:center; border-radius:1rem;" />
+             style="width:100%; height:100%; object-fit:cover; object-position:top center; border-radius:1rem;" />
 
-        <!-- Service boxes – 3-column row -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Col 2: Service boxes stacked -->
+        <div class="flex flex-col gap-4">
           <div class="service-box" style="background: var(--color-coach-1-100);">
-            <p class="font-display text-3xl font-light mb-2" style="color: var(--color-coach-1);">&#10024;</p>
-            <p class="font-display text-base text-warm-dark leading-tight">Psychologische Beratung</p>
-            <p class="text-xs mt-1" style="color: var(--color-coach-1-700);">Innere Muster verstehen und l&ouml;sen</p>
+            <i class="ph-light ph-compass h-10 w-10 mb-2" style="font-size: 2.5rem; color: var(--color-coach-1-700);" aria-hidden="true"></i>
+            <p class="font-display text-base text-warm-dark leading-tight">Life &amp; System Coaching</p>
+            <p class="text-xs mt-1" style="color: var(--color-coach-1-700);">Muster erkennen, neue Wege gestalten</p>
           </div>
           <div class="service-box" style="background: var(--color-coach-2-100);">
-            <p class="font-display text-3xl font-light mb-2" style="color: var(--color-coach-2-700);">&#9670;</p>
+            <i class="ph-light ph-hand-heart h-10 w-10 mb-2" style="font-size: 2.5rem; color: var(--color-coach-2-700);" aria-hidden="true"></i>
             <p class="font-display text-base text-warm-dark leading-tight">Gesundheitsbegleitung</p>
-            <p class="text-xs mt-1" style="color: var(--color-coach-2-700);">K&ouml;rper und Wohlbefinden st&auml;rken</p>
+            <p class="text-xs mt-1" style="color: var(--color-coach-2-700);">Zur&uuml;ck in die eigene Kraft finden</p>
           </div>
-          <div class="service-box" style="background: var(--color-coach-3-100);">
-            <p class="font-display text-3xl font-light mb-2" style="color: var(--color-coach-3-700);">&#9671;</p>
-            <p class="font-display text-base text-warm-dark leading-tight">Life &amp; Systemisches Coaching</p>
-            <p class="text-xs mt-1" style="color: var(--color-coach-3-700);">Muster erkennen, Richtung finden</p>
+          <div class="service-box flex-1" style="background: var(--color-coach-3-100);">
+            <i class="ph-light ph-list-magnifying-glass h-10 w-10 mb-2" style="font-size: 2.5rem; color: var(--color-coach-3-700);" aria-hidden="true"></i>
+            <p class="font-display text-base text-warm-dark leading-tight">Psychologische Beratung</p>
+            <p class="text-xs mt-1" style="color: var(--color-coach-3-700);">Emotionale Belastungen (verstehen und) langfristig l&ouml;sen</p>
           </div>
         </div><!-- end service boxes -->
 
@@ -613,7 +629,7 @@
       <!-- Step 1 -->
       <div class="section-fade relative">
         <p class="plan-step-number text-warm-dark">01</p>
-        <h3 class="font-display text-2xl text-warm-dark mb-3 -mt-4">Finde deine Coach.</h3>
+        <h3 class="font-display text-2xl text-warm-dark mb-3 -mt-4">Finde deine Begleitung.</h3>
         <p class="text-neutral-600 text-sm leading-relaxed">
           Schau dir die Coaches an. Vertrau deiner Intuition,
           wen du ansprechen m&ouml;chtest.
@@ -654,7 +670,7 @@
     <div class="text-center mb-16">
       <p class="text-sm font-semibold tracking-widest uppercase text-neutral-500 mb-4">Der Raum hinter Flowerk</p>
       <h2 class="font-display text-4xl md:text-5xl text-warm-dark">
-        Die Coaches: Verschiedene Perspektiven. Eine Philosophie.
+        Die Coaches: Drei Perspektiven. Eine Philosophie.
       </h2>
     </div>
 
@@ -665,27 +681,30 @@
         <div class="coach-card bg-white relative" style="border-radius:1.5rem; overflow:visible; box-shadow: var(--shadow-soft);">
           <div class="coach-accent-bar" style="background: var(--color-coach-1); border-radius: 1.5rem 1.5rem 0 0;"></div>
           <!-- Avatar centered on top -->
-          <div class="coach-avatar-wrap" style="background: var(--color-coach-1-100); color: var(--color-coach-1-700);">C</div>
+          <div class="coach-avatar-wrap" style="background: var(--color-coach-1-100); color: var(--color-coach-1-700);"><img src="assets/Anna.png" alt="Anna Kornberger" style="width:100%;height:100%;object-fit:cover;object-position:center top;" /></div>
         <div class="p-8 pt-10 coach-card-body">
           <!-- Badge -->
           <span class="coach-badge" style="background: var(--color-coach-1);">
-            Psychologische Beratung
+            Life &amp; System Coaching
           </span>
           <!-- Teaser (2-3 Saetze) -->
-          <h3 class="font-display text-2xl text-warm-dark mb-3">Coach 1</h3>
+          <h3 class="font-display text-2xl text-warm-dark mb-1">Anna Kornberger</h3>
+          <p class="text-xs font-medium text-neutral-400 tracking-wide mb-4 coach-subtitle">CiP&reg; Life &amp; System Coach Master</p>
           <p class="text-neutral-600 text-sm leading-relaxed mb-6 coach-card-text">
-            Hier stehen 2&ndash;3 kurze S&auml;tze &uuml;ber diese Coach:
-            ihr Schwerpunkt, was sie bewegt und warum sie das tut, was sie tut.
-            Kein langer Lebenslauf &mdash; nur das Wesentliche.
+            Ich begleite dich dabei, nicht noch mehr zu funktionieren, sondern diese Muster 
+            bewusst zu durchbrechen &ndash; f&uuml;r dein Kind und dich. Meine Arbeit verbindet systemisches 
+            Coaching, Bewusstseinsarbeit und K&ouml;rperintelligenz &ndash; und bezieht dein Familiensystem 
+            als Ganzes ein. Finde zur&uuml;ck in eine tiefe Verbindung zu dir selbst und erlebe mehr 
+            Freude, Leichtigkeit und Vertrauen in deinem Mama-Alltag.
           </p>
           <!-- CTAs -->
           <div class="space-y-3">
-            <button onclick="openModal('coach1')"
+            <button onclick="openModal('coach3')"
                     class="btn w-full text-white border-none rounded-full font-medium transition-transform hover:scale-105"
                     style="background: var(--color-coach-1);">
               Erstgespr&auml;ch buchen (kostenlos)
             </button>
-            <button onclick="openModal('coach1')"
+            <button onclick="openModal('coach3')"
                     class="btn-outline-soft"
                     style="border-color: var(--color-coach-1); color: var(--color-coach-1-700);">
               Nachricht senden
@@ -703,16 +722,19 @@
       <div class="coach-grid-item relative">
         <div class="coach-card bg-white relative" style="border-radius:1.5rem; overflow:visible; box-shadow: var(--shadow-soft);">
           <div class="coach-accent-bar" style="background: var(--color-coach-2); border-radius: 1.5rem 1.5rem 0 0;"></div>
-          <div class="coach-avatar-wrap" style="background: var(--color-coach-2-100); color: var(--color-coach-2-700);">C</div>
+          <div class="coach-avatar-wrap" style="background: var(--color-coach-2-100); color: var(--color-coach-2-700);"><img src="assets/Anna-Lena.png" alt="Anna-Lena Juchum" style="width:100%;height:100%;object-fit:cover;object-position:center top;" /></div>
         <div class="p-8 pt-10 coach-card-body">
           <span class="coach-badge" style="background: var(--color-coach-2-700);">
             Gesundheitsbegleitung
           </span>
-          <h3 class="font-display text-2xl text-warm-dark mb-3">Coach 2</h3>
+          <h3 class="font-display text-2xl text-warm-dark mb-1">Anna-Lena Juchum</h3>
+          <p class="text-xs font-medium text-neutral-400 tracking-wide mb-4 coach-subtitle">Gesundheitspraktikerin &ndash; Masteranwenderin HT</p>
           <p class="text-neutral-600 text-sm leading-relaxed mb-6 coach-card-text">
-            Hier stehen 2&ndash;3 kurze S&auml;tze &uuml;ber diese Coach:
-            ihr Schwerpunkt, was sie bewegt und warum sie das tut, was sie tut.
-            Kein langer Lebenslauf &mdash; nur das Wesentliche.
+            Ich begleite Menschen dabei, wieder in Verbindung mit sich selbst zu kommen und 
+            ihren eigenen Weg mit mehr Klarheit, Vertrauen und Freude zu gehen.
+            Mit einem ganzheitlichen Blick auf K&ouml;rper, Geist und Seele schaffe ich einen Raum 
+            f&uuml;r pers&ouml;nliche Entwicklung und bewusste Gesundheitsf&ouml;rderung &ndash; achtsam, authentisch 
+            und auf Augenh&ouml;he.
           </p>
           <div class="space-y-3">
             <button onclick="openModal('coach2')"
@@ -734,28 +756,31 @@
         </div>
       </div>
 
-      <!-- Coach 3 – Life & Systemisches Coaching (Lavender) -->
+      <!-- Coach 3 – Life & System Coaching (Lavender) -->
       <div class="coach-grid-item relative">
         <div class="coach-card bg-white relative" style="border-radius:1.5rem; overflow:visible; box-shadow: var(--shadow-soft);">
           <div class="coach-accent-bar" style="background: var(--color-coach-3); border-radius: 1.5rem 1.5rem 0 0;"></div>
-          <div class="coach-avatar-wrap" style="background: var(--color-coach-3-100); color: var(--color-coach-3-700);">C</div>
+          <div class="coach-avatar-wrap" style="background: var(--color-coach-3-100); color: var(--color-coach-3-700);"><img src="assets/Antonia.jpg" alt="Antonia Awad" style="width:100%;height:100%;object-fit:cover;object-position:center top;" /></div>
         <div class="p-8 pt-10 coach-card-body">
           <span class="coach-badge" style="background: var(--color-coach-3-700);">
-            Life &amp; Systemisches Coaching
+            Psychologische Beratung
           </span>
-          <h3 class="font-display text-2xl text-warm-dark mb-3">Coach 3</h3>
+          <h3 class="font-display text-2xl text-warm-dark mb-1">Antonia Awad</h3>
+          <p class="text-xs font-medium text-neutral-400 tracking-wide mb-4 coach-subtitle">Psychologin (M.Sc. Psychotherapie) &amp; Klangtherapeutin</p>
           <p class="text-neutral-600 text-sm leading-relaxed mb-6 coach-card-text">
-            Hier stehen 2&ndash;3 kurze S&auml;tze &uuml;ber diese Coach:
-            ihr Schwerpunkt, was sie bewegt und warum sie das tut, was sie tut.
-            Kein langer Lebenslauf &mdash; nur das Wesentliche.
+            Ich begleite Menschen dabei, in herausfordernden Zeiten Orientierung zu finden, 
+            ihre innere Klarheit zu st&auml;rken und wieder mehr Verbindung zu sich selbst zu entwickeln. 
+            Mit psychologischem Fachwissen, gespr&auml;chstherapeutischen Ans&auml;tzen und Klangtherapie 
+            unterst&uuml;tze ich individuelle Wege zu mehr Selbstverst&auml;ndnis und einem stimmigen 
+            Einklang von K&ouml;rper, Geist und Emotionen.
           </p>
           <div class="space-y-3">
-            <button onclick="openModal('coach3')"
+            <button onclick="openModal('coach1')"
                     class="btn w-full text-white border-none rounded-full font-medium transition-transform hover:scale-105"
                     style="background: var(--color-coach-3-700);">
               Erstgespr&auml;ch buchen (kostenlos)
             </button>
-            <button onclick="openModal('coach3')"
+            <button onclick="openModal('coach1')"
                     class="btn-outline-soft"
                     style="border-color: var(--color-coach-3-700); color: var(--color-coach-3-700);">
               Nachricht senden
@@ -872,9 +897,9 @@
       </div>
     </div>
     <div class="border-t border-neutral-700 mt-8 pt-8 flex flex-wrap gap-6 justify-center md:justify-start">
-      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-1-100); color: var(--color-coach-1-700);">Psychologische Beratung</span>
+      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-1-100); color: var(--color-coach-1-700);">Life &amp; System Coaching</span>
       <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-2-100); color: var(--color-coach-2-700);">Gesundheitsbegleitung</span>
-      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-3-100); color: var(--color-coach-3-700);">Life &amp; Systemisches Coaching</span>
+      <span class="text-xs px-3 py-1 rounded-full" style="background: var(--color-coach-3-100); color: var(--color-coach-3-700);">Psychologische Beratung</span>
     </div>
   </div>
 </footer>
